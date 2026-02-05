@@ -84,7 +84,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm font-sans">
               <li className="flex items-center gap-3 text-gray-400">
                 <Mail className="w-4 h-4 text-gold" />
-                concierge@luxegems.com
+                concierge@houseofgold.com
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Phone className="w-4 h-4 text-gold" />
@@ -121,7 +121,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-900 mt-6 pt-4 text-center text-xs text-gray-600 font-sans tracking-widest uppercase">
-          <p>&copy; {new Date().getFullYear()} Luxe Gems. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} House of Gold. All rights reserved.</p>
         </div>
       </div>
     </footer>
