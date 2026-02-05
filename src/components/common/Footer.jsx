@@ -13,7 +13,7 @@ const Footer = () => {
                 <span className="text-xl">✨</span>
               </div>
               <span className="text-xl font-serif font-bold text-white tracking-widest">
-                LUXE <span className="text-gold">GEMS</span>
+                House of <span className="text-gold">Gold</span>
               </span>
             </div>
             <p className="text-sm text-gray-400 font-sans leading-relaxed">
