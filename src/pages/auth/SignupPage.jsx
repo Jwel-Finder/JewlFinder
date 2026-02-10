@@ -80,7 +80,7 @@ const SignupPage = () => {
                     </div>
                     <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Create Account</h2>
                     <p className="text-sm text-gray-600">
-                        Join our Jewelry Marketplace today
+                        Join us today
                     </p>
                 </div>
 

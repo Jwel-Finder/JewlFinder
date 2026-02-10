@@ -313,7 +313,7 @@ const StoreManagement = () => {
                         <EmptyState
                             type="store"
                             title="No Boutiques Listed"
-                            message="Start your journey by adding your first jewelry boutique to the Luxe Gems marketplace."
+                            message="Start your journey by adding your first jewelry boutique to the House of Gold marketplace."
                             actionLabel="Register First Boutique"
                             onAction={() => setShowForm(true)}
                         />

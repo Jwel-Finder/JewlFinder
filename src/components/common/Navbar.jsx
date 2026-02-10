@@ -202,7 +202,7 @@ const Navbar = () => {
                             <span className="text-xl">✨</span>
                         </div>
                         <span className="text-2xl font-serif font-bold text-gray-900 tracking-wide">
-                            LUXE <span className="text-gold">GEMS</span>
+                            House of <span className="text-gold">Gold</span>
                         </span>
                     </Link>
 
