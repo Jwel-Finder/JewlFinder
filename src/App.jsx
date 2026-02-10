@@ -22,6 +22,8 @@ import InquiryPage from './pages/customer/InquiryPage';
 import InquiryConfirmationPage from './pages/customer/InquiryConfirmationPage';
 import VisitStatusPage from './pages/customer/VisitStatusPage';
 import CategoryVendorsPage from './pages/customer/CategoryVendorsPage';
+import WalletPage from './pages/customer/WalletPage';
+import TransactionHistoryPage from './pages/customer/TransactionHistoryPage';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -144,6 +146,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/customer/wallet"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <WalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/transaction-history"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <TransactionHistoryPage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Vendor Routes */}
             <Route
@@ -178,6 +196,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/vendor/wallet"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <WalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/transaction-history"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <TransactionHistoryPage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin Routes */}
             <Route
@@ -209,6 +243,22 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <PlatformMonitoring />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/wallet"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <WalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/transaction-history"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <TransactionHistoryPage />
                 </ProtectedRoute>
               }
             />

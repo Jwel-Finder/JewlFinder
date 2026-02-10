@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown } from 'lucide-react';
+import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 const Navbar = () => {
@@ -272,6 +272,13 @@ const Navbar = () => {
                                     <p className="text-sm font-serif font-bold text-gray-900">{user.name}</p>
                                     <p className="text-xs text-gold uppercase tracking-widest mb-3">{role}</p>
                                     <button
+                                        onClick={() => { setShowUserDropdown(false); navigate(`/${role}/wallet`); }}
+                                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded mb-1"
+                                    >
+                                        <Wallet className="w-4 h-4" />
+                                        My Wallet
+                                    </button>
+                                    <button
                                         onClick={() => { setShowUserDropdown(false); handleLogout(); }}
                                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                                     >
@@ -331,6 +338,13 @@ const Navbar = () => {
                                 </div>
                                 <p className="text-sm font-serif font-bold text-gray-900">{user.name}</p>
                                 <p className="text-xs text-gold uppercase tracking-widest mb-4">{role}</p>
+                                <button
+                                    onClick={() => { setMobileMenuOpen(false); navigate(`/${role}/wallet`); }}
+                                    className="flex items-center gap-2 px-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 uppercase tracking-widest text-xs hover:bg-gold hover:text-white transition w-full justify-center mb-2"
+                                >
+                                    <Wallet className="w-4 h-4" />
+                                    My Wallet
+                                </button>
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center gap-2 px-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 uppercase tracking-widest text-xs hover:bg-black hover:text-white transition w-full justify-center"
