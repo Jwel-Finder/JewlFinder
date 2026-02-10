@@ -24,6 +24,7 @@ import VisitStatusPage from './pages/customer/VisitStatusPage';
 import CategoryVendorsPage from './pages/customer/CategoryVendorsPage';
 import WalletPage from './pages/customer/WalletPage';
 import TransactionHistoryPage from './pages/customer/TransactionHistoryPage';
+import CollectionsPage from './pages/customer/CollectionsPage';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -94,7 +95,7 @@ function App() {
               path="/customer/stores"
               element={
                 <ProtectedRoute requiredRole="customer">
-                  <CustomerHome />
+                  <CollectionsPage />
                 </ProtectedRoute>
               }
             />

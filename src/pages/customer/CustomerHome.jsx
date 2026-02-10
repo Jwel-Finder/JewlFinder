@@ -103,11 +103,10 @@ const CustomerHome = () => {
               <button
                 key={city}
                 onClick={() => setLocation({ ...location, city: city })}
-                className={`px-4 py-2 rounded-full border transition-all duration-300 font-serif ${
-                  location.city.toLowerCase() === city.toLowerCase()
+                className={`px-4 py-2 rounded-full border transition-all duration-300 font-serif ${location.city.toLowerCase() === city.toLowerCase()
                     ? 'bg-gold text-white border-gold shadow-md'
                     : 'bg-white text-gray-600 border-gold/20 hover:border-gold hover:text-gold-dark'
-                }`}
+                  }`}
               >
                 {city}
               </button>

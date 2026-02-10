@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 const Navbar = () => {
     const { user, role, logout } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
     const userDropdownRef = useRef(null);
@@ -34,6 +35,7 @@ const Navbar = () => {
     const pollIntervalSecondsEffective = Number(appSettings?.metals?.pollIntervalSeconds ?? import.meta.env.VITE_METALS_POLL_INTERVAL ?? 60);
 
     const currencySymbol = effectiveBaseCurrency === 'INR' ? '₹' : effectiveBaseCurrency === 'USD' ? '$' : `${effectiveBaseCurrency} `;
+
     // Formatter to display currency symbols and localized grouping
     let formatter;
     try {
@@ -134,7 +136,7 @@ const Navbar = () => {
             setMetalsError('Failed to fetch metals data');
             setMetalsLoading(false);
         }
-    }; 
+    };
 
     useEffect(() => {
         fetchMetals();
@@ -210,14 +212,17 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center gap-8">
                         {navItems.map((item) => {
                             const Icon = item.icon;
+                            const isActive = location.pathname === item.path;
                             return (
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    className="flex items-center gap-2 text-gray-600 hover:text-gold-dark transition font-sans text-sm tracking-wide uppercase"
+                                    className={`relative flex items-center gap-2 transition-all duration-300 font-sans text-sm tracking-wide uppercase group ${isActive ? 'text-gold font-bold' : 'text-gray-600 hover:text-gold-dark'
+                                        }`}
                                 >
-                                    <Icon className="w-4 h-4" />
+                                    <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
                                     {item.label}
+
                                 </Link>
                             );
                         })}
@@ -254,7 +259,7 @@ const Navbar = () => {
                                 )}
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
                     {/* User Icon & Dropdown */}
                     <div className="hidden md:flex items-center gap-6 relative" ref={userDropdownRef}>
@@ -305,12 +310,14 @@ const Navbar = () => {
                         <div className="flex flex-col gap-4">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
+                                const isActive = location.pathname === item.path;
                                 return (
                                     <Link
                                         key={item.path}
                                         to={item.path}
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center gap-3 text-gray-700 hover:text-gold transition font-sans text-sm uppercase tracking-wide px-4 py-2"
+                                        className={`flex items-center gap-3 transition font-sans text-sm uppercase tracking-wide px-4 py-2 ${isActive ? 'text-gold font-bold bg-gold/10' : 'text-gray-700 hover:text-gold'
+                                            }`}
                                     >
                                         <Icon className="w-4 h-4" />
                                         {item.label}
