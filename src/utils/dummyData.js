@@ -301,6 +301,106 @@ export const DUMMY_INQUIRIES = [
     }
 ];
 
+// Dummy repair requests
+export const DUMMY_REPAIRS = [
+    {
+        id: 'repair-1',
+        customerId: 'customer-1',
+        customerName: 'John Doe',
+        customerEmail: 'customer@jewel.com',
+        customerPhone: '+91 9876543210',
+        itemType: 'chain',
+        issueType: 'chain_cut',
+        issueDescription: '',
+        images: [
+            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=400&fit=crop'
+        ],
+        approximateWeight: '15',
+        location: 'Mumbai',
+        preferredContact: 'whatsapp',
+        status: 'vendor_contacted',
+        quotes: [
+            {
+                vendorId: 'vendor-1',
+                vendorName: 'Gold Palace Owner',
+                storeName: 'Gold Palace',
+                estimatedPrice: 2500,
+                timeRequired: '2-3 days',
+                pickupDropoff: 'both',
+                notes: 'Chain soldering with quality check included',
+                createdAt: '2024-04-11T10:00:00'
+            }
+        ],
+        interestedVendors: ['vendor-1'],
+        createdAt: '2024-04-10T14:30:00',
+        updatedAt: '2024-04-11T10:00:00'
+    },
+    {
+        id: 'repair-2',
+        customerId: 'customer-2',
+        customerName: 'Jane Smith',
+        customerEmail: 'customer2@jewel.com',
+        customerPhone: '+91 9876543211',
+        itemType: 'earring',
+        issueType: 'broken_earpiece',
+        issueDescription: '',
+        images: [
+            'https://images.unsplash.com/photo-1535556116002-6281ff3e9f90?w=400&h=400&fit=crop'
+        ],
+        approximateWeight: '8',
+        location: 'Mumbai',
+        preferredContact: 'call',
+        status: 'posted',
+        quotes: [],
+        interestedVendors: [],
+        createdAt: '2024-04-12T16:20:00',
+        updatedAt: '2024-04-12T16:20:00'
+    },
+    {
+        id: 'repair-3',
+        customerId: 'customer-1',
+        customerName: 'John Doe',
+        customerEmail: 'customer@jewel.com',
+        customerPhone: '+91 9876543210',
+        itemType: 'ring',
+        issueType: 'missing_stone',
+        issueDescription: '',
+        images: [
+            'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=400&h=400&fit=crop'
+        ],
+        approximateWeight: '10',
+        location: 'Delhi',
+        preferredContact: 'chat',
+        status: 'in_progress',
+        quotes: [
+            {
+                vendorId: 'vendor-1',
+                vendorName: 'Gold Palace Owner',
+                storeName: 'Gold Palace',
+                estimatedPrice: 15000,
+                timeRequired: '5-7 days',
+                pickupDropoff: 'pickup',
+                notes: 'Stone replacement with matching quality gemstone',
+                createdAt: '2024-04-08T11:30:00'
+            },
+            {
+                vendorId: 'vendor-2',
+                vendorName: 'Diamond Dreams Owner',
+                storeName: 'Diamond Dreams',
+                estimatedPrice: 12000,
+                timeRequired: '4-5 days',
+                pickupDropoff: 'both',
+                notes: 'Premium stone sourcing available',
+                createdAt: '2024-04-08T15:45:00'
+            }
+        ],
+        interestedVendors: ['vendor-1', 'vendor-2'],
+        createdAt: '2024-04-07T09:00:00',
+        updatedAt: '2024-04-08T15:45:00'
+    }
+];
+
 // Initialize localStorage with dummy data if not exists
 export const initializeDummyData = () => {
     if (!localStorage.getItem('jewel_users')) {
@@ -314,5 +414,8 @@ export const initializeDummyData = () => {
     }
     if (!localStorage.getItem('jewel_inquiries')) {
         localStorage.setItem('jewel_inquiries', JSON.stringify(DUMMY_INQUIRIES));
+    }
+    if (!localStorage.getItem('jewel_repairs')) {
+        localStorage.setItem('jewel_repairs', JSON.stringify(DUMMY_REPAIRS));
     }
 };

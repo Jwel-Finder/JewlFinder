@@ -4,7 +4,8 @@ import { useAuthStore } from '../../store/authStore';
 import { useStoreStore } from '../../store/storeStore';
 import { useDesignStore } from '../../store/designStore';
 import { useInquiryStore } from '../../store/inquiryStore';
-import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown } from 'lucide-react';
+import { useRepairStore } from '../../store/repairStore';
+import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown, Wrench } from 'lucide-react';
 
 const VendorDashboard = () => {
     const navigate = useNavigate();
@@ -12,12 +13,15 @@ const VendorDashboard = () => {
     const { getStoresByVendor } = useStoreStore();
     const { designs } = useDesignStore();
     const { getInquiriesByStore } = useInquiryStore();
+    const { getAllRepairs } = useRepairStore();
 
     const [stats, setStats] = useState({
         totalStores: 0,
         totalDesigns: 0,
         pendingInquiries: 0,
-        completedVisits: 0
+        completedVisits: 0,
+        activeRepairRequests: 0,
+        quotesProvided: 0
     });
     const [recentInquiries, setRecentInquiries] = useState([]);
 
@@ -40,11 +44,25 @@ const VendorDashboard = () => {
             const pending = allInquiries.filter(i => i.status === 'pending').length;
             const completed = allInquiries.filter(i => i.status === 'completed').length;
 
+            // Get repair stats
+            const allRepairs = getAllRepairs();
+            const activeRepairs = allRepairs.filter(r => r.status === 'posted' || r.status === 'vendor_contacted').length;
+
+            // Count quotes provided by this vendor
+            let quotesCount = 0;
+            allRepairs.forEach(repair => {
+                if (repair.quotes) {
+                    quotesCount += repair.quotes.filter(q => q.vendorId === user.id).length;
+                }
+            });
+
             setStats({
                 totalStores: vendorStores.length,
                 totalDesigns: vendorDesigns.length,
                 pendingInquiries: pending,
-                completedVisits: completed
+                completedVisits: completed,
+                activeRepairRequests: activeRepairs,
+                quotesProvided: quotesCount
             });
 
             // Get recent 5 inquiries
@@ -91,6 +109,18 @@ const VendorDashboard = () => {
             value: stats.completedVisits,
             icon: CheckCircle,
             textColor: 'text-green-600'
+        },
+        {
+            label: 'Active Repair Requests',
+            value: stats.activeRepairRequests,
+            icon: Wrench,
+            textColor: 'text-gold-dark'
+        },
+        {
+            label: 'Quotes Provided',
+            value: stats.quotesProvided,
+            icon: MessageSquare,
+            textColor: 'text-blue-600'
         }
     ];
 
@@ -169,6 +199,7 @@ const VendorDashboard = () => {
                                 {[
                                     { icon: Plus, label: 'New Masterpiece', desc: 'Add a design', path: '/vendor/designs' },
                                     { icon: Store, label: 'Manage Boutiques', desc: 'Update store details', path: '/vendor/stores' },
+                                    { icon: Wrench, label: 'Repairs', desc: 'View repair requests', path: '/vendor/repair-requests' },
                                     { icon: MessageSquare, label: 'View Inquiries', desc: 'Check customer messages', path: '/vendor/inquiries' },
                                 ].map((action, idx) => (
                                     <button

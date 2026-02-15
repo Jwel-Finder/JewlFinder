@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStoreStore } from '../../store/storeStore';
 import { useDesignStore } from '../../store/designStore';
-import { MapPin, Search, TrendingUp, Layers } from 'lucide-react';
+import { MapPin, Search, TrendingUp, Layers, Wrench } from 'lucide-react';
 import StoreCard from '../../components/common/StoreCard';
 import CategoryCard from '../../components/common/CategoryCard';
 import DesignCard from '../../components/common/DesignCard';
