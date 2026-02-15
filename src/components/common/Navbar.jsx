@@ -1,13 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet } from 'lucide-react';
+import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet, Mail } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import SidePanel from './SidePanel';
+import GlobalMessagingPanel from '../panels/GlobalMessagingPanel';
 
 const Navbar = () => {
     const { user, role, logout } = useAuthStore();
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [showGlobalMessaging, setShowGlobalMessaging] = useState(false);
     const userDropdownRef = useRef(null);
 
     // Metals (gold/silver) live prices
@@ -193,6 +196,7 @@ const Navbar = () => {
     if (!user) return null;
 
     return (
+        <>
         <nav className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-gold/10">
             <div className="w-full px-4">
                 <div className="flex justify-between items-center h-20">
@@ -254,14 +258,28 @@ const Navbar = () => {
                                 )}
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
-                    {/* User Icon & Dropdown */}
-                    <div className="hidden md:flex items-center gap-6 relative" ref={userDropdownRef}>
+                    {/* User Actions Group - Messages & Profile */}
+                    <div className="hidden md:flex items-center gap-3" ref={userDropdownRef}>
+                        {/* Messages Icon (Customer Only) */}
+                        {role === 'customer' && (
+                            <button
+                                onClick={() => setShowGlobalMessaging(true)}
+                                className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition shadow-sm relative group"
+                                title="Messages"
+                            >
+                                <Mail className="w-5 h-5" />
+                                {/* Unread Badge */}
+                                <span className="absolute top-1 right-1 w-2 h-2 bg-gold rounded-full group-hover:scale-110 transition-transform"></span>
+                            </button>
+                        )}
+
+                        {/* User Profile Icon */}
                         <button
                             onClick={() => setShowUserDropdown((s) => !s)}
                             aria-expanded={showUserDropdown}
-                            className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                            className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition shadow-sm relative"
                         >
                             <User className="w-5 h-5" />
                         </button>
@@ -317,6 +335,22 @@ const Navbar = () => {
                                     </Link>
                                 );
                             })}
+
+                            {/* Messages Button in Mobile Menu (Customer Only) */}
+                            {role === 'customer' && (
+                                <button
+                                    onClick={() => {
+                                        setShowGlobalMessaging(true);
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className="flex items-center gap-3 text-gray-700 hover:text-gold transition font-sans text-sm uppercase tracking-wide px-4 py-2 w-full"
+                                >
+                                    <Mail className="w-4 h-4" />
+                                    <span>Messages</span>
+                                    <span className="ml-auto w-2 h-2 bg-gold rounded-full"></span>
+                                </button>
+                            )}
+
                             <div className="pt-4 border-t border-gray-100 px-4">
                                 <div className="flex justify-between items-center text-sm text-gray-700 mb-3">
                                     <div className="flex items-center gap-2">
@@ -358,6 +392,24 @@ const Navbar = () => {
                 )}
             </div>
         </nav>
+
+        {/* Global Messaging Panel - Outside nav element */}
+        {role === 'customer' && (
+            <SidePanel
+                isOpen={showGlobalMessaging}
+                onClose={() => setShowGlobalMessaging(false)}
+                title="Messages"
+            >
+                <GlobalMessagingPanel
+                    onSelectConversation={(conversation) => {
+                        console.log('Selected conversation:', conversation);
+                        setShowGlobalMessaging(false);
+                        // TODO: Navigate to specific conversation or open messaging panel
+                    }}
+                />
+            </SidePanel>
+        )}
+        </>
     );
 };
 

@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { MapPin, Star, Phone, Clock } from 'lucide-react';
 
 const StoreCard = ({ store, compact = false }) => {
+    // Generate random distance for demo (0.5 to 10 km)
+    const randomDistance = (Math.random() * 9.5 + 0.5).toFixed(1);
+
     return (
         <Link
             to={`/customer/store/${store.id}`}
@@ -30,9 +33,17 @@ const StoreCard = ({ store, compact = false }) => {
 
             {/* Store Info */}
             <div className={`${compact ? 'p-4' : 'p-6'} text-center`}>
-                <h3 className={`${compact ? 'text-lg' : 'text-xl'} font-serif font-bold text-gray-900 mb-2 group-hover:text-gold-dark transition duration-300`}>
+                <h3 className={`${compact ? 'text-lg' : 'text-xl'} font-serif font-bold text-gray-900 mb-1 group-hover:text-gold-dark transition duration-300`}>
                     {store.name}
                 </h3>
+
+                {/* Distance Indicator */}
+                <div className="flex items-center justify-center gap-1 mb-3">
+                    <MapPin className="w-3 h-3 text-gray-400" strokeWidth={2} />
+                    <span className="text-xs text-gray-400 font-sans">
+                        {randomDistance} km away from your location
+                    </span>
+                </div>
 
                 <p className="text-sm text-gray-500 font-sans tracking-wide mb-4 line-clamp-2">
                     {store.description}

@@ -7,6 +7,7 @@ import StoreCard from '../../components/common/StoreCard';
 import CategoryCard from '../../components/common/CategoryCard';
 import DesignCard from '../../components/common/DesignCard';
 import EmptyState from '../../components/common/EmptyState';
+import PremiumServicesSection from '../../components/common/PremiumServicesSection';
 import { searchStores, filterStoresByCity, filterStoresByPincode } from '../../utils/filters';
 
 const CustomerHome = () => {
@@ -92,6 +93,10 @@ const CustomerHome = () => {
           </div>
         </div>
       </div>
+
+      {/* Premium Services Section */}
+      <PremiumServicesSection />
+
       {/* Featured Cities - Quick Filter */}
       <div className="bg-ivory py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
