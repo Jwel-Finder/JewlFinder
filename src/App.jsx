@@ -28,6 +28,7 @@ import TransactionHistoryPage from './pages/customer/TransactionHistoryPage';
 import PostRepair from './pages/customer/PostRepair';
 import MyRepairs from './pages/customer/MyRepairs';
 import RepairDetails from './pages/customer/RepairDetails';
+import MyPawns from './pages/customer/MyPawns';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -36,6 +37,7 @@ import DesignManagement from './pages/vendor/DesignManagement';
 import InquiryManagement from './pages/vendor/InquiryManagement';
 import RepairRequestsFeed from './pages/vendor/RepairRequestsFeed';
 import MySavedRepairs from './pages/vendor/MySavedRepairs';
+import PawnRequestsFeed from './pages/vendor/PawnRequestsFeed';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -194,6 +196,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/customer/pawn"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <MyPawns />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Vendor Routes */}
             <Route
@@ -257,6 +267,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="vendor">
                   <MySavedRepairs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/pawn-requests"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <PawnRequestsFeed />
                 </ProtectedRoute>
               }
             />
