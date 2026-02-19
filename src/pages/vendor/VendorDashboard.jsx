@@ -5,7 +5,7 @@ import { useStoreStore } from '../../store/storeStore';
 import { useDesignStore } from '../../store/designStore';
 import { useInquiryStore } from '../../store/inquiryStore';
 import { useRepairStore } from '../../store/repairStore';
-import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown, Wrench, Coins, Gem } from 'lucide-react';
+import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown, Wrench, Coins, Gem, Gavel } from 'lucide-react';
 
 const VendorDashboard = () => {
     const navigate = useNavigate();
@@ -202,6 +202,7 @@ const VendorDashboard = () => {
                                     { icon: Wrench, label: 'Repairs', desc: 'View repair requests', path: '/vendor/repair-requests' },
                                     { icon: Coins, label: 'Gold Pawn', desc: 'View pawn requests', path: '/vendor/pawn-requests' },
                                     { icon: Gem, label: 'Buy Gold', desc: 'View sell requests', path: '/vendor/sell-requests' },
+                                    { icon: Gavel, label: 'Gold Auctions', desc: 'Bid on auctions', path: '/vendor/auctions' },
                                     { icon: MessageSquare, label: 'View Inquiries', desc: 'Check customer messages', path: '/vendor/inquiries' },
                                 ].map((action, idx) => (
                                     <button

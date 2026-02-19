@@ -86,7 +86,7 @@ export const DUMMY_STORES = [
         vendorId: 'vendor-2',
         name: 'Diamond Dreams',
         description: 'Exquisite diamond collections',
-        image: 'https://images.unsplash.com/photo-1601121141418-1c7e4e6d3f6e?w=800',
+        image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800',
         address: '456 Park Street',
         city: 'Mumbai',
         state: 'Maharashtra',
@@ -406,8 +406,11 @@ export const initializeDummyData = () => {
     if (!localStorage.getItem('jewel_users')) {
         localStorage.setItem('jewel_users', JSON.stringify(DUMMY_USERS));
     }
-    if (!localStorage.getItem('jewel_stores')) {
+    // Always refresh stores to pick up image URL fixes
+    const STORES_VERSION = 'v2';
+    if (localStorage.getItem('jewel_stores_version') !== STORES_VERSION) {
         localStorage.setItem('jewel_stores', JSON.stringify(DUMMY_STORES));
+        localStorage.setItem('jewel_stores_version', STORES_VERSION);
     }
     if (!localStorage.getItem('jewel_designs')) {
         localStorage.setItem('jewel_designs', JSON.stringify(DUMMY_DESIGNS));
