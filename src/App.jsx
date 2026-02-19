@@ -29,6 +29,7 @@ import PostRepair from './pages/customer/PostRepair';
 import MyRepairs from './pages/customer/MyRepairs';
 import RepairDetails from './pages/customer/RepairDetails';
 import MyPawns from './pages/customer/MyPawns';
+import SellJewellery from './pages/customer/SellJewellery';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -38,6 +39,7 @@ import InquiryManagement from './pages/vendor/InquiryManagement';
 import RepairRequestsFeed from './pages/vendor/RepairRequestsFeed';
 import MySavedRepairs from './pages/vendor/MySavedRepairs';
 import PawnRequestsFeed from './pages/vendor/PawnRequestsFeed';
+import SellRequestsFeed from './pages/vendor/SellRequestsFeed';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -204,6 +206,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/customer/sell-jewellery"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <SellJewellery />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Vendor Routes */}
             <Route
@@ -275,6 +285,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="vendor">
                   <PawnRequestsFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/sell-requests"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <SellRequestsFeed />
                 </ProtectedRoute>
               }
             />
