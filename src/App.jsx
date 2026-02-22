@@ -42,6 +42,7 @@ import MySavedRepairs from './pages/vendor/MySavedRepairs';
 import PawnRequestsFeed from './pages/vendor/PawnRequestsFeed';
 import SellRequestsFeed from './pages/vendor/SellRequestsFeed';
 import AuctionFeed from './pages/vendor/AuctionFeed';
+import VendorBilling from './pages/vendor/VendorBilling';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -311,6 +312,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="vendor">
                   <AuctionFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/billing"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <VendorBilling />
                 </ProtectedRoute>
               }
             />

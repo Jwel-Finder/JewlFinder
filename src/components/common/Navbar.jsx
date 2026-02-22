@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet, Mail, Gem } from 'lucide-react';
+import { useMetalsStore } from '../../store/metalsStore';
+import { Menu, X, LogOut, Home, Store, Package, MessageSquare, Users, Settings, User, ArrowUp, ArrowDown, Wallet, Mail, Gem, Receipt } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import SidePanel from './SidePanel';
 import GlobalMessagingPanel from '../panels/GlobalMessagingPanel';
@@ -13,14 +14,8 @@ const Navbar = () => {
     const [showGlobalMessaging, setShowGlobalMessaging] = useState(false);
     const userDropdownRef = useRef(null);
 
-    // Metals (gold/silver) live prices
-    const [metals, setMetals] = useState({
-        gold: { price: null, prev: null, change: null, changePct: null },
-        silver: { price: null, prev: null, change: null, changePct: null }
-    });
-    const [metalsLoading, setMetalsLoading] = useState(true);
-    const [metalsError, setMetalsError] = useState(null);
-    const [metalsUpdatedAt, setMetalsUpdatedAt] = useState(null);
+    // Metals (gold/silver) live prices – shared store
+    const { metals, loading: metalsLoading, error: metalsError, updatedAt: metalsUpdatedAt, isMock, startPolling, stopPolling } = useMetalsStore();
 
     // Runtime app settings (non-sensitive config)
     const [appSettings, setAppSettings] = useState(null);
@@ -37,21 +32,19 @@ const Navbar = () => {
     const pollIntervalSecondsEffective = Number(appSettings?.metals?.pollIntervalSeconds ?? import.meta.env.VITE_METALS_POLL_INTERVAL ?? 60);
 
     const currencySymbol = effectiveBaseCurrency === 'INR' ? '₹' : effectiveBaseCurrency === 'USD' ? '$' : `${effectiveBaseCurrency} `;
-    // Formatter to display currency symbols and localized grouping
     let formatter;
     try {
         formatter = new Intl.NumberFormat(effectiveBaseCurrency === 'INR' ? 'en-IN' : 'en-US', { style: 'currency', currency: effectiveBaseCurrency, maximumFractionDigits: 2 });
     } catch (e) {
-        // Fallback to simple formatting
         formatter = { format: (v) => `${currencySymbol}${Number(v).toFixed(2)}` };
     }
 
-    // Small inline sparkline renderer (prev and curr values)
+    // Small inline sparkline renderer
     function Sparkline({ prev, curr, width = 40, height = 18, stroke = '#10b981' }) {
         if (prev == null || curr == null) return null;
         const min = Math.min(prev, curr);
         const max = Math.max(prev, curr);
-        const range = max - min || 1; // avoid div by zero
+        const range = max - min || 1;
         const x0 = 2;
         const x1 = width - 2;
         const y = (v) => height - ((v - min) / range) * height;
@@ -66,84 +59,12 @@ const Navbar = () => {
         );
     }
 
-    const fetchMetals = async () => {
-        setMetalsLoading(true);
-        setMetalsError(null);
-        try {
-            const key = import.meta.env.VITE_METALS_API_KEY;
-            const baseUrl = effectiveApiUrl;
-            const baseCurrency = effectiveBaseCurrency;
-            if (!key) {
-                setMetalsError('No API key set (VITE_METALS_API_KEY)');
-                setMetalsLoading(false);
-                return;
-            }
-
-            const OUNCE_TO_GRAM = 31.1034768;
-
-            // Latest prices (MetalPriceAPI expects api_key and currencies params)
-            const latestUrl = `${baseUrl}/latest?api_key=${key}&base=${baseCurrency}&currencies=XAU,XAG`;
-            const latestRes = await fetch(latestUrl);
-            const latest = await latestRes.json();
-            const goldLatestRate = latest?.rates?.XAU ?? latest?.data?.rates?.XAU ?? latest?.data?.XAU ?? null;
-            const silverLatestRate = latest?.rates?.XAG ?? latest?.data?.rates?.XAG ?? latest?.data?.XAG ?? null;
-
-            // Yesterday close for daily movement
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const dateStr = yesterday.toISOString().split('T')[0];
-
-            // Try two common historical endpoints for compatibility
-            let prev = {};
-            try {
-                const prevUrl1 = `${baseUrl}/historical?date=${dateStr}&api_key=${key}&base=${baseCurrency}&currencies=XAU,XAG`;
-                const prevRes1 = await fetch(prevUrl1);
-                if (prevRes1.ok) prev = await prevRes1.json();
-                else {
-                    const prevUrl2 = `${baseUrl}/${dateStr}?api_key=${key}&base=${baseCurrency}&currencies=XAU,XAG`;
-                    const prevRes2 = await fetch(prevUrl2);
-                    if (prevRes2.ok) prev = await prevRes2.json();
-                }
-            } catch (err) {
-                prev = {};
-            }
-
-            const goldPrevRate = prev?.rates?.XAU ?? prev?.data?.rates?.XAU ?? prev?.data?.XAU ?? null;
-            const silverPrevRate = prev?.rates?.XAG ?? prev?.data?.rates?.XAG ?? prev?.data?.XAG ?? null;
-
-            // API returns XAU/XAG per base (e.g., XAU per INR). Invert to get base per XAU (price per oz), then convert to per gram.
-            const goldPricePerOunce = goldLatestRate ? (1 / goldLatestRate) : null;
-            const silverPricePerOunce = silverLatestRate ? (1 / silverLatestRate) : null;
-            const goldPrevPerOunce = goldPrevRate ? (1 / goldPrevRate) : null;
-            const silverPrevPerOunce = silverPrevRate ? (1 / silverPrevRate) : null;
-
-            const goldPricePerGram = goldPricePerOunce ? (goldPricePerOunce / OUNCE_TO_GRAM) : null;
-            const silverPricePerGram = silverPricePerOunce ? (silverPricePerOunce / OUNCE_TO_GRAM) : null;
-            const goldPrevPerGram = goldPrevPerOunce ? (goldPrevPerOunce / OUNCE_TO_GRAM) : null;
-            const silverPrevPerGram = silverPrevPerOunce ? (silverPrevPerOunce / OUNCE_TO_GRAM) : null;
-
-            const goldChange = (goldPricePerGram !== null && goldPrevPerGram !== null) ? goldPricePerGram - goldPrevPerGram : null;
-            const silverChange = (silverPricePerGram !== null && silverPrevPerGram !== null) ? silverPricePerGram - silverPrevPerGram : null;
-            const goldPct = (goldChange !== null && goldPrevPerGram) ? (goldChange / goldPrevPerGram) * 100 : null;
-            const silverPct = (silverChange !== null && silverPrevPerGram) ? (silverChange / silverPrevPerGram) * 100 : null;
-
-            setMetals({
-                gold: { price: goldPricePerGram, prev: goldPrevPerGram, change: goldChange, changePct: goldPct },
-                silver: { price: silverPricePerGram, prev: silverPrevPerGram, change: silverChange, changePct: silverPct }
-            });
-            setMetalsUpdatedAt(new Date().toISOString());
-            setMetalsLoading(false);
-        } catch (err) {
-            setMetalsError('Failed to fetch metals data');
-            setMetalsLoading(false);
-        }
-    };
-
+    // Start polling via shared store
     useEffect(() => {
-        fetchMetals();
-        const id = setInterval(fetchMetals, pollIntervalSecondsEffective * 1000);
-        return () => clearInterval(id);
-    }, [pollIntervalSecondsEffective, effectiveApiUrl, effectiveBaseCurrency]);
+        const apiKey = import.meta.env.VITE_METALS_API_KEY;
+        startPolling(effectiveApiUrl, effectiveBaseCurrency, apiKey, pollIntervalSecondsEffective);
+        return () => stopPolling();
+    }, [effectiveApiUrl, effectiveBaseCurrency, pollIntervalSecondsEffective]);
 
 
     const handleLogout = () => {
@@ -177,6 +98,7 @@ const Navbar = () => {
                     { label: 'Dashboard', path: '/vendor/dashboard', icon: Home },
                     { label: 'My Boutique', path: '/vendor/stores', icon: Store },
                     { label: 'Catalog', path: '/vendor/designs', icon: Package },
+                    { label: 'Billing', path: '/vendor/billing', icon: Receipt },
                     { label: 'Inquiries', path: '/vendor/inquiries', icon: MessageSquare }
                 ];
             case 'admin':
