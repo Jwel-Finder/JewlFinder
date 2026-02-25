@@ -16,48 +16,20 @@ const AdminDashboard = () => {
     // but here we can derive directly from store hooks for simplicity or use the useEffect pattern
     const [stats, setStats] = useState({
         totalUsers: 0,
-        totalVendors: 0,
-        totalVisits: 0
+        totalVendors: 0
     });
 
     useEffect(() => {
         const users = getUsers();
         const vendors = users.filter(u => u.role === 'vendor');
-        const visits = parseInt(localStorage.getItem('totalVisits') || '0');
         setStats({
             totalUsers: users.length,
-            totalVendors: vendors.length,
-            totalVisits: visits
+            totalVendors: vendors.length
         });
         // Ensure stores are loaded
         getAllStores();
 
-        // Real-time update listener for storage events (cross-tab)
-        const handleStorageChange = (e) => {
-            if (e.key === 'totalVisits') {
-                setStats(prev => ({
-                    ...prev,
-                    totalVisits: parseInt(e.newValue || '0')
-                }));
-            }
-        };
-        window.addEventListener('storage', handleStorageChange);
-
-        // Fallback polling for same-tab updates or if storage event misses
-        const interval = setInterval(() => {
-            const currentVisits = parseInt(localStorage.getItem('totalVisits') || '0');
-            setStats(prev => {
-                if (prev.totalVisits !== currentVisits) {
-                    return { ...prev, totalVisits: currentVisits };
-                }
-                return prev;
-            });
-        }, 2000);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-            clearInterval(interval);
-        };
+        getAllStores();
     }, [getAllStores]);
 
 
@@ -66,7 +38,7 @@ const AdminDashboard = () => {
     const activeStores = stores.filter(s => s.status === 'approved');
 
     const statCards = [
-        { label: 'Total Visits', value: stats.totalVisits.toLocaleString(), icon: Activity, trend: 'Live', trendUp: true, color: 'text-gold' },
+        { label: 'Total Revenue', value: '₹45.2L', icon: IndianRupee, trend: '+18%', trendUp: true, color: 'text-gold' },
         { label: 'Active Boutiques', value: activeStores.length, icon: Store, trend: '+12', trendUp: true },
         { label: 'Pending Approvals', value: pendingStores.length, icon: AlertTriangle, trend: 'Action Req', trendUp: false, textColor: 'text-gold' },
         { label: 'Total Users', value: stats.totalUsers, icon: Users, trend: '+56', trendUp: true },

@@ -5,7 +5,7 @@ import { useStoreStore } from '../../store/storeStore';
 import { useDesignStore } from '../../store/designStore';
 import { useInquiryStore } from '../../store/inquiryStore';
 import { useRepairStore } from '../../store/repairStore';
-import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown, Wrench, Coins, Gem, Gavel } from 'lucide-react';
+import { Store, Package, MessageSquare, CheckCircle, TrendingUp, PlusCircle, Plus, ArrowRight, TrendingDown, Wrench, Coins, Gem, Gavel, Activity } from 'lucide-react';
 
 const VendorDashboard = () => {
     const navigate = useNavigate();
@@ -21,7 +21,8 @@ const VendorDashboard = () => {
         pendingInquiries: 0,
         completedVisits: 0,
         activeRepairRequests: 0,
-        quotesProvided: 0
+        quotesProvided: 0,
+        totalVisits: 0
     });
     const [recentInquiries, setRecentInquiries] = useState([]);
 
@@ -62,7 +63,8 @@ const VendorDashboard = () => {
                 pendingInquiries: pending,
                 completedVisits: completed,
                 activeRepairRequests: activeRepairs,
-                quotesProvided: quotesCount
+                quotesProvided: quotesCount,
+                totalVisits: parseInt(localStorage.getItem('totalVisits') || '0')
             });
 
             // Get recent 5 inquiries
@@ -83,80 +85,76 @@ const VendorDashboard = () => {
 
             setCategoryStats(catStats);
         }
+
+        // Real-time update listener for storage events (cross-tab)
+        const handleStorageChange = (e) => {
+            if (e.key === 'totalVisits') {
+                setStats(prev => ({
+                    ...prev,
+                    totalVisits: parseInt(e.newValue || '0')
+                }));
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+
+        // Fallback polling
+        const interval = setInterval(() => {
+            const currentVisits = parseInt(localStorage.getItem('totalVisits') || '0');
+            setStats(prev => {
+                if (prev.totalVisits !== currentVisits) {
+                    return { ...prev, totalVisits: currentVisits };
+                }
+                return prev;
+            });
+        }, 2000);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            clearInterval(interval);
+        };
     }, [user, designs]);
 
     const statCards = [
         {
+            label: 'Total Visits (Traffic)',
+            value: stats.totalVisits.toLocaleString(),
+            icon: Activity,
+            textColor: 'text-gold',
+            trend: 'Live',
+            trendUp: true
+        },
+        {
             label: 'Total Stores',
             value: stats.totalStores,
             icon: Store,
-            textColor: 'text-gold-dark'
+            textColor: 'text-gold-dark',
+            trend: '+0',
+            trendUp: true
         },
         {
             label: 'Total Designs',
             value: stats.totalDesigns,
             icon: Package,
-            textColor: 'text-gray-800'
+            textColor: 'text-gray-800',
+            trend: '+0',
+            trendUp: true
         },
         {
             label: 'Pending Inquiries',
             value: stats.pendingInquiries,
             icon: MessageSquare,
-            textColor: 'text-gold'
+            textColor: 'text-gold-dark',
+            trend: 'Action Req',
+            trendUp: false
         },
-        {
-            label: 'Completed Visits',
-            value: stats.completedVisits,
-            icon: CheckCircle,
-            textColor: 'text-green-600'
-        },
-        {
-            label: 'Active Repair Requests',
-            value: stats.activeRepairRequests,
-            icon: Wrench,
-            textColor: 'text-gold-dark'
-        },
-        {
-            label: 'Quotes Provided',
-            value: stats.quotesProvided,
-            icon: MessageSquare,
-            textColor: 'text-blue-600'
-        }
     ];
 
     return (
         <div className="min-h-screen bg-cream py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="mb-10 border-b border-gold/20 pb-6">
-                    <h1 className="text-4xl font-serif font-bold text-gray-900 mb-2">
-                        Welcome back, <span className="text-gold-dark">{user?.name}</span>
-                    </h1>
-                    <p className="text-gray-500 font-sans tracking-wide uppercase text-sm">Manage your boutique & collections</p>
-                </div>
-
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    {statCards.map((stat, index) => {
-                        const Icon = stat.icon;
-                        return (
-                            <div key={index} className="bg-white p-8 border border-gray-100 hover:border-gold/30 hover:shadow-lg transition-all duration-300 group">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className={`p-3 bg-gray-50 rounded-full group-hover:bg-gold/10 transition-colors`}>
-                                        <Icon className={`w-6 h-6 ${stat.textColor}`} />
-                                    </div>
-                                    <TrendingUp className="w-5 h-5 text-gray-300 group-hover:text-gold transition-colors" />
-                                </div>
-                                <div className="text-4xl font-serif font-bold text-gray-900 mb-1">{stat.value}</div>
-                                <div className="text-xs text-gray-500 font-sans uppercase tracking-widest">{stat.label}</div>
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* Quick Actions */}
                 <div className="mb-12">
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-gold/20">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gold/20">
                         <div>
                             <h1 className="text-3xl font-serif font-bold text-gray-900 mb-1">
                                 Welcome back, <span className="text-gold-dark">{user?.name}</span>
@@ -165,8 +163,11 @@ const VendorDashboard = () => {
                                 Your Boutique Overview
                             </p>
                         </div>
-                        <div className="flex items-center gap-2 text-sm font-medium text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm border border-gold/20">
-                            <span>{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <div className="mt-4 md:mt-0 flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-sm font-medium text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm border border-gold/20">
+                                <Activity className="w-4 h-4 text-gold animate-pulse" />
+                                <span>{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -176,12 +177,14 @@ const VendorDashboard = () => {
                             <div key={index} className="bg-ivory p-6 border border-gold/10 hover:border-gold/30 hover:shadow-lg transition-all duration-300 group rounded-lg">
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="p-2 bg-gold/5 rounded-full group-hover:bg-gold/10 transition-colors">
-                                        <stat.icon className="w-5 h-5 text-gold-dark" />
+                                        <stat.icon className={`w-5 h-5 ${stat.textColor}`} />
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                                        {stat.trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3 text-red-500" />}
-                                        <span className={stat.trendUp ? 'text-green-600' : 'text-red-600'}>{stat.trend}</span>
-                                    </div>
+                                    {stat.trend && (
+                                        <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${stat.trendUp ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>
+                                            {stat.trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                                            {stat.trend}
+                                        </div>
+                                    )}
                                 </div>
                                 <div>
                                     <h3 className="text-3xl font-serif font-bold text-gray-900 mb-1">{stat.value}</h3>
