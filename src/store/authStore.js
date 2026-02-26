@@ -91,6 +91,22 @@ export const useAuthStore = create((set, get) => ({
                 phone: user.phone || ''
             };
 
+            // Track visits (only for customers)
+            if (user.role === 'customer') {
+                let currentVisits = parseInt(localStorage.getItem('totalVisits') || '0');
+                if (currentVisits < 100) {
+                    // Start with a random number between 1000 and 5000 for realistic data
+                    currentVisits = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+                }
+                localStorage.setItem('totalVisits', (currentVisits + 1).toString());
+
+                // Dispatch storage event manually for same-tab updates (though login usually redirects)
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'totalVisits',
+                    newValue: (currentVisits + 1).toString()
+                }));
+            }
+
             setAuthUser(authUser);
             set({
                 user: authUser,

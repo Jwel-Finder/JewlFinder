@@ -28,6 +28,8 @@ const AdminDashboard = () => {
         });
         // Ensure stores are loaded
         getAllStores();
+
+        getAllStores();
     }, [getAllStores]);
 
 
