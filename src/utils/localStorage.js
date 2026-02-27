@@ -76,6 +76,14 @@ export const setInquiries = (inquiries) => {
     return setToStorage('jewel_inquiries', inquiries);
 };
 
+export const getRepairs = () => {
+    return getFromStorage('jewel_repairs') || [];
+};
+
+export const setRepairs = (repairs) => {
+    return setToStorage('jewel_repairs', repairs);
+};
+
 // Save a new user
 export const saveUser = (user) => {
     try {

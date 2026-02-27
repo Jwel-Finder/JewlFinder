@@ -69,10 +69,12 @@ const DesignCard = ({ design, compact = false }) => {
 
             {/* Overlay for sold out */}
             {!isAvailable && (
-                <div className="absolute inset-0 bg-gray-900 bg-opacity-40 flex items-center justify-center">
-                    <span className="text-white text-2xl font-bold bg-red-600 px-6 py-2 rounded-full transform rotate-12">
-                        SOLD OUT
-                    </span>
+                <div className="absolute inset-x-0 top-0 h-64 bg-black/50 flex items-center justify-center pointer-events-none" style={{ height: compact ? '8rem' : '16rem' }}>
+                    <div className="bg-red-600/90 backdrop-blur-sm px-5 py-1.5 border-y border-white/30 shadow-lg">
+                        <span className="text-white text-[10px] font-bold uppercase tracking-[0.2em]">
+                            Sold Out
+                        </span>
+                    </div>
                 </div>
             )}
         </Link>

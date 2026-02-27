@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import { useStoreStore } from './store/storeStore';
 import { useDesignStore } from './store/designStore';
 import { useInquiryStore } from './store/inquiryStore';
+import { useRepairStore } from './store/repairStore';
 import { initializeDummyData } from './utils/dummyData';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -24,13 +25,24 @@ import VisitStatusPage from './pages/customer/VisitStatusPage';
 import CategoryVendorsPage from './pages/customer/CategoryVendorsPage';
 import WalletPage from './pages/customer/WalletPage';
 import TransactionHistoryPage from './pages/customer/TransactionHistoryPage';
-import CollectionsPage from './pages/customer/CollectionsPage';
+import PostRepair from './pages/customer/PostRepair';
+import MyRepairs from './pages/customer/MyRepairs';
+import RepairDetails from './pages/customer/RepairDetails';
+import MyPawns from './pages/customer/MyPawns';
+import SellJewellery from './pages/customer/SellJewellery';
+import GoldAuction from './pages/customer/GoldAuction';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
 import StoreManagement from './pages/vendor/StoreManagement';
 import DesignManagement from './pages/vendor/DesignManagement';
 import InquiryManagement from './pages/vendor/InquiryManagement';
+import RepairRequestsFeed from './pages/vendor/RepairRequestsFeed';
+import MySavedRepairs from './pages/vendor/MySavedRepairs';
+import PawnRequestsFeed from './pages/vendor/PawnRequestsFeed';
+import SellRequestsFeed from './pages/vendor/SellRequestsFeed';
+import AuctionFeed from './pages/vendor/AuctionFeed';
+import VendorBilling from './pages/vendor/VendorBilling';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -47,6 +59,7 @@ function App() {
   const { initStores } = useStoreStore();
   const { initDesigns } = useDesignStore();
   const { initInquiries } = useInquiryStore();
+  const { initRepairs } = useRepairStore();
 
   // Initialize app on mount
   useEffect(() => {
@@ -55,6 +68,7 @@ function App() {
     initStores();
     initDesigns();
     initInquiries();
+    initRepairs();
   }, []);
 
   return (
@@ -163,6 +177,54 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/customer/post-repair"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <PostRepair />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/gold-repair"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <MyRepairs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/repair/:repairId"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <RepairDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/pawn"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <MyPawns />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/sell-jewellery"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <SellJewellery />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer/gold-auction"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <GoldAuction />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Vendor Routes */}
             <Route
@@ -210,6 +272,54 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="vendor">
                   <TransactionHistoryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/repair-requests"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <RepairRequestsFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/saved-repairs"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <MySavedRepairs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/pawn-requests"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <PawnRequestsFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/sell-requests"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <SellRequestsFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/auctions"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <AuctionFeed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/billing"
+              element={
+                <ProtectedRoute requiredRole="vendor">
+                  <VendorBilling />
                 </ProtectedRoute>
               }
             />

@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreStore } from '../../store/storeStore';
 import { useDesignStore } from '../../store/designStore';
-import { MapPin, Phone, Clock, Star, Mail } from 'lucide-react';
+import { MapPin, Phone, Clock, Star, Mail, MessageCircle, Mic, PenLine } from 'lucide-react';
 import DesignCard from '../../components/common/DesignCard';
 import EmptyState from '../../components/common/EmptyState';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import SidePanel from '../../components/common/SidePanel';
+import ReviewPanel from '../../components/panels/ReviewPanel';
+import MessagingPanel from '../../components/panels/MessagingPanel';
 
 const StoreDetailsPage = () => {
     const { storeId } = useParams();
@@ -14,6 +17,30 @@ const StoreDetailsPage = () => {
     const [store, setStore] = useState(null);
     const [designs, setDesigns] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activePanel, setActivePanel] = useState(null); // 'review', 'text', 'voice', or null
+
+    // Interaction handlers
+    const handleAddReview = () => {
+        setActivePanel('review');
+    };
+
+    const handleTextStore = () => {
+        setActivePanel('text');
+    };
+
+    const handleVoiceMessage = () => {
+        setActivePanel('voice');
+    };
+
+    const closePanel = () => {
+        setActivePanel(null);
+    };
+
+    const handleReviewSubmit = (reviewData) => {
+        console.log('Review submitted:', reviewData);
+        // TODO: Submit review to backend
+        closePanel();
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -121,6 +148,67 @@ const StoreDetailsPage = () => {
                 </div>
             </div>
 
+            {/* Customer Interaction Section */}
+            <div className="bg-gradient-to-b from-white to-ivory py-8 border-y border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        {/* Add Review Button */}
+                        <button
+                            onClick={handleAddReview}
+                            className="group flex items-center gap-3 px-6 py-3 bg-white border border-gold/20 rounded-full shadow-sm hover:shadow-md hover:border-gold hover:bg-gradient-to-r hover:from-gold/5 hover:to-gold-dark/5 transition-all duration-300 w-full sm:w-auto justify-center"
+                        >
+                            <div className="w-10 h-10 bg-gradient-to-br from-gold-100 to-gold-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <PenLine className="w-4 h-4 text-gold-dark" strokeWidth={2} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-sm font-serif font-semibold text-charcoal group-hover:text-gold-dark transition-colors duration-300">
+                                    Add Review
+                                </p>
+                                <p className="text-xs text-gray-500 font-sans">
+                                    Share your experience
+                                </p>
+                            </div>
+                        </button>
+
+                        {/* Text the Store Button */}
+                        <button
+                            onClick={handleTextStore}
+                            className="group flex items-center gap-3 px-6 py-3 bg-white border border-gold/20 rounded-full shadow-sm hover:shadow-md hover:border-gold hover:bg-gradient-to-r hover:from-gold/5 hover:to-gold-dark/5 transition-all duration-300 w-full sm:w-auto justify-center"
+                        >
+                            <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <MessageCircle className="w-4 h-4 text-gold-dark" strokeWidth={2} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-sm font-serif font-semibold text-charcoal group-hover:text-gold-dark transition-colors duration-300">
+                                    Text the Store
+                                </p>
+                                <p className="text-xs text-gray-500 font-sans">
+                                    Send a message
+                                </p>
+                            </div>
+                        </button>
+
+                        {/* Voice Message Button */}
+                        <button
+                            onClick={handleVoiceMessage}
+                            className="group flex items-center gap-3 px-6 py-3 bg-white border border-gold/20 rounded-full shadow-sm hover:shadow-md hover:border-gold hover:bg-gradient-to-r hover:from-gold/5 hover:to-gold-dark/5 transition-all duration-300 w-full sm:w-auto justify-center"
+                        >
+                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <Mic className="w-4 h-4 text-gold-dark" strokeWidth={2} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-sm font-serif font-semibold text-charcoal group-hover:text-gold-dark transition-colors duration-300">
+                                    Voice Message
+                                </p>
+                                <p className="text-xs text-gray-500 font-sans">
+                                    Record and send
+                                </p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {/* Designs Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -141,6 +229,31 @@ const StoreDetailsPage = () => {
                     />
                 )}
             </div>
+
+            {/* Side Panels */}
+            <SidePanel
+                isOpen={activePanel === 'review'}
+                onClose={closePanel}
+                title="Add Your Review"
+            >
+                <ReviewPanel
+                    storeName={store?.name}
+                    onSubmit={handleReviewSubmit}
+                    onCancel={closePanel}
+                />
+            </SidePanel>
+
+            <SidePanel
+                isOpen={activePanel === 'text' || activePanel === 'voice'}
+                onClose={closePanel}
+                title={`Message ${store?.name || 'Store'}`}
+            >
+                <MessagingPanel
+                    store={store}
+                    mode={activePanel === 'voice' ? 'voice' : 'text'}
+                    onClose={closePanel}
+                />
+            </SidePanel>
         </div>
     );
 };
