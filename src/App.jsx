@@ -31,6 +31,7 @@ import RepairDetails from './pages/customer/RepairDetails';
 import MyPawns from './pages/customer/MyPawns';
 import SellJewellery from './pages/customer/SellJewellery';
 import GoldAuction from './pages/customer/GoldAuction';
+import CollectionsPage from './pages/customer/CollectionsPage';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
